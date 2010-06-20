@@ -50,6 +50,7 @@
 <cfcomponent name="${name}" 
 			displayname="${name}:RemoteProxyBean" 
 			hint="Abstract Base Class for Aop Based Remote Proxy Beans" 
+			${componentAttributes}
 			output="false">
 			
 	<cfset variables.proxyId = CreateUUId() />

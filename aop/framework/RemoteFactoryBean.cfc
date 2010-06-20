@@ -71,6 +71,8 @@
 	<cfset variables.beanFactoryName = "" />
 	<cfset variables.beanFactoryScope = "" />
 	<cfset variables.remoteMethodNames = "" />
+	<cfset variables.accessType = "remote" />
+	<cfset variables.componentAttributes = "" />
 	<cfset variables.proxyAdviceChains = 0 />
 	<cfset variables.addMissingMethods = ""/>
 
@@ -132,6 +134,16 @@
 		<cfset variables.beanFactoryScope = arguments.beanFactoryScope />
 	</cffunction>
 
+	<cffunction name="setAccessType" access="public" returntype="void" output="false">
+		<cfargument name="accessType" type="string" required="true" />
+		<cfset variables.accessType = arguments.accessType />
+	</cffunction>
+
+	<cffunction name="setComponentAttributes" access="public" returntype="void" output="false">
+		<cfargument name="componentAttributes" type="string" required="true" />
+		<cfset variables.componentAttributes = arguments.componentAttributes />
+	</cffunction>
+	
 	<cffunction name="setId" access="public" returntype="void" output="false">
 		<cfargument name="id" type="string" required="true" />
 		<cfset variables.id = arguments.id />
@@ -217,7 +229,7 @@
 
 								<!--- now we need to generate a remote method --->
 								<cfset functionString = functionString &
-									   variables.aopProxyUtils.createRemoteMethod(md.functions[functionIx], functionName, 'remote')  & Chr(10) & Chr(10) />
+									   variables.aopProxyUtils.createRemoteMethod(md.functions[functionIx], functionName, variables.accessType)  & Chr(10) & Chr(10) />
 
 							</cfif>
 						</cfif>
@@ -269,7 +281,8 @@
 														  variables.beanFactoryName,
 														  variables.beanFactoryScope,
 														  functionString,
-														  variables.id) />
+														  variables.id,
+														  variables.componentAttributes) />
 
 		<cfset variables.constructed = true />
 

@@ -168,6 +168,7 @@
 		<cfargument name="scope" type="string" required="true" />
 		<cfargument name="functions" type="string" required="true" />
 		<cfargument name="proxyFactoryId" type="string" required="true" />
+		<cfargument name="componentAttributes" type="string" required="false" default="" />
 		
 		<cfset var path = GetDirectoryFromPath(getMetaData(this).path) />
 		<cfset var beanDescription = '' />
@@ -185,6 +186,7 @@
 		<cfset beanDescription = Replace(beanDescription, '${factoryName}', arguments.factoryName, "ALL") />
 		<cfset beanDescription = Replace(beanDescription, '${proxyFactoryId}', arguments.proxyFactoryId, "ALL") />
 		<cfset beanDescription = Replace(beanDescription, '${functions}', arguments.functions, "ALL") />
+		<cfset beanDescription = Replace(beanDescription, '${componentAttributes}', arguments.componentAttributes, "ALL") />
 		
 		<!--- now create methods for all the remote service methods --->
 		
