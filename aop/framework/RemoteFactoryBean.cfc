@@ -74,7 +74,8 @@
 	<cfset variables.accessType = "remote" />
 	<cfset variables.componentAttributes = "" />
 	<cfset variables.proxyAdviceChains = 0 />
-	<cfset variables.addMissingMethods = ""/>
+	<cfset variables.addMissingMethods = "" />
+	<cfset variables.factoryLocatorClass = "coldspring.beans.util.BeanFactoryUtils" />
 
 	<cffunction name="init" access="public" returntype="coldspring.aop.framework.RemoteFactoryBean" output="false">
 		<!--- <cfset var category = CreateObject("java", "org.apache.log4j.Category") />
@@ -88,7 +89,7 @@
 		<cfset variables.serviceName = arguments.serviceName />
 	</cffunction>
 
-	<!--- DEPRECIATED, in favor of absolute and relative path --->
+	<!--- DEPRECATED, in favor of absolute and relative path --->
 	<cffunction name="setServiceLocation" access="public" returntype="void" output="false">
 		<cfargument name="serviceLocation" type="string" required="true" />
 		<cfset variables.serviceLocation = arguments.serviceLocation />
@@ -143,7 +144,12 @@
 		<cfargument name="componentAttributes" type="string" required="true" />
 		<cfset variables.componentAttributes = arguments.componentAttributes />
 	</cffunction>
-	
+
+	<cffunction name="setFactoryLocatorClass" access="public" returntype="void" output="false">
+		<cfargument name="factoryLocatorClass" type="string" required="true" />
+		<cfset variables.factoryLocatorClass = arguments.factoryLocatorClass />
+	</cffunction>
+
 	<cffunction name="setId" access="public" returntype="void" output="false">
 		<cfargument name="id" type="string" required="true" />
 		<cfset variables.id = arguments.id />
@@ -177,17 +183,17 @@
 		<cfset var functionName = '' />
 		<cfset var functionString = '' />
 		<cfset var usedFunctions = StructNew() />
-		<cfset var bfUtils = createObject("component","coldspring.beans.util.BeanFactoryUtils").init()/>
+		<cfset var bfLocator = createObject("component",variables.factoryLocatorClass).init()/>
 		<cfset var bfScope = "application"/>
 
 		<!--- ok, very first thing, make sure this factory is going to be accessable to the generated proxies --->
 		<cfif len(variables.beanFactoryScope)>
 			<cfset bfScope = variables.beanFactoryScope/>
 		</cfif>
-		<cfif len(variables.beanFactoryName) and not bfUtils.namedFactoryExists(bfScope,variables.beanFactoryName)>
-			<cfset bfUtils.setNamedFactory(bfScope,variables.beanFactoryName,variables.beanFactory)/>
-		<cfelseif not bfUtils.defaultFactoryExists(bfScope)>
-			<cfset bfUtils.setDefaultFactory(bfScope,variables.beanFactory)/>
+		<cfif len(variables.beanFactoryName) and not bfLocator.namedFactoryExists(bfScope,variables.beanFactoryName)>
+			<cfset bfLocator.setNamedFactory(bfScope,variables.beanFactoryName,variables.beanFactory)/>
+		<cfelseif not bfLocator.defaultFactoryExists(bfScope)>
+			<cfset bfLocator.setDefaultFactory(bfScope,variables.beanFactory)/>
 		</cfif>
 
 		<!--- first we need to build the advisor to search for pointcut matches --->
@@ -282,6 +288,7 @@
 														  variables.beanFactoryScope,
 														  functionString,
 														  variables.id,
+                                                          variables.factoryLocatorClass,
 														  variables.componentAttributes) />
 
 		<cfset variables.constructed = true />
